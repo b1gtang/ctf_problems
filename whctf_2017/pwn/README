@@ -1,0 +1,19 @@
+最好是用我提供的libc
+
+文件说明
+a.out 是pwn文件
+libc.so.6 运行所需的库
+
+题目设置了三个洞
+1. set key的操作有未初始化漏洞
+2. exit 有个fsb
+3. 加解密时有bof
+
+思路:
+1. 利用ufi leak canary
+2. bof覆盖栈中libc地址的低 通过vsyscall转移
+3. 直接在main bof会造成vsyscall调用失败 所以要do_exit 给rdi一个可写的地址
+4. fsb没啥用,这个函数的作用就是设置rdi为可写
+5. bof因为是gets输入导致,但是会在末位加\x00
+    通过部分覆盖 当libc_base的低32bit为0xf1e000时,可跳gadet 0xf0274,因此需覆盖为00e274
+    所以,选手只需爆破24bit,测试为平均5分钟就可以撞...
