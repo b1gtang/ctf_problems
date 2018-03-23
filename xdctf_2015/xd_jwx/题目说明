@@ -1,0 +1,27 @@
+题目说明
+
+
+环境搭建
+	add user pwn
+	cd /home
+	cp xd_jwxt /home/pwn/
+	cat start.sh
+		socat tcp-l:2333,reuseaddr,fork exec:./xd_jwxt
+	chown -R pwn pwn
+	chgrp -R pwn pwn
+	cd pwn/
+	chgrp pwn xd_jwxt
+	chgrp pwn start.sh
+	chmod 750 xd_jwxt
+	chmod 740 start.sh
+
+
+信息泄露
+1.栈溢出泄露libc基址
+2.edit name时没有检查长度，没有在字符串末尾加\0,通过list泄露堆基址。
+
+漏洞不限于这三种poc，可以两两结合写出更多的poc
+
+1.通过backdoor，执行alpha2编码的shellcode
+2.通过栈溢出，返回到system或者返回到backdoor或者rop
+3.通过堆溢出doword shoot，控制eip返回到libc或者栈溢出的函数或者backdoor或者把shellcode写到message进行rop。。。
