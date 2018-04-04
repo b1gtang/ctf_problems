@@ -1,0 +1,27 @@
+Writeup
+
+There is a typical smart home situation. Provisioning technology is designed to provide Wi-Fi credentials for smart devices without an interactive UI. So we send the credentials through broadcast rely on an app. Since the communication between the app and the device is unidirectional, exsiting solutions seldom take into consideration the protection of credentials in real world.
+
+1. firstly you should know which kind of architecture does the bin use and you will need a Xtensa disassembler
+2. then you should know the bin is run in ESP8266(through the string "Firmware ONLY supports ESP8266!!!")
+3. if you load the bin at 0x40000, the decode function is in 0x4024904, you just need to comprehend this function
+4. the decode function shows that every 10 packets can be recovered to one acutual byte
+5. the pcap is given to caputure the data sent by the app (wlan.ta == 00:90:4c:5b:8f:24 and wlan.da == ff:ff:ff:ff:ff:ff)
+
+src = 'LoCCS_IoT\njusttest\n'
+rtlval = []
+for i in xrange(len(src)):
+    rtlval.append(0)
+    rtlval.append(0)
+    tmp = i & 0xf
+    rtlval.append(tmp+1)
+    rtlval.append((15-tmp)+1)
+    tmp = (i & 0xF0)>>4
+    rtlval.append(tmp+1)
+    rtlval.append((15-tmp)+1)
+    tmp = ord(src[i]) & 0xF
+    rtlval.append(tmp+1)
+    rtlval.append((15-tmp)+1)
+    tmp = (ord(src[i]) &0xf0) >>4
+    rtlval.append(tmp+1)
+    rtlval.append((15-tmp)+1)
